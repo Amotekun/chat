@@ -1,12 +1,12 @@
 "use client";
 
-import { AuthSocialButton } from "@/app/components/auth-social-button";
+import { AuthSocialButton } from "@/app/(auth)/components/auth-social-button";
 import { Button } from "@/app/components/button";
 import { Input } from "@/app/components/inputs/input";
 import axios from "axios";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
     FieldValues, 
     SubmitHandler, 
@@ -18,9 +18,16 @@ import { BsGithub, BsGoogle } from "react-icons/bs";
 type Variant = "LOGIN" | "REGISTER";
 
 export const AuthForm = () => {
+    const session = useSession();
     const router = useRouter();
     const [variant, setVariant] = useState<Variant>("LOGIN");
     const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        if (session?.status === "authenticated") {
+            router.push("/conversations")
+        }
+    }, [session?.status, router])
 
     const toggleVariant = useCallback(() => {
         if (variant == "LOGIN") {
