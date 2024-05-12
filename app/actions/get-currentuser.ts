@@ -1,5 +1,5 @@
-import { getSession } from "next-auth/react"
 import db from "@/app/libs/db";
+import getSession from "./getSession";
 
 export const getCurrentuser = async () => {
     try {
@@ -23,4 +23,4 @@ export const getCurrentuser = async () => {
     } catch (error: any) {
         return null;
     }
-}
+};

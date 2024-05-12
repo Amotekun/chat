@@ -9,5 +9,5 @@ export interface AuthModalProps {
 export default function AuthModal ({
     children
 }: AuthModalProps) {
-    return <SessionProvider>{children}</SessionProvider>
+    return <SessionProvider>{children}</SessionProvider>;
 }

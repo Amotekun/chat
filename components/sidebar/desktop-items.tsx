@@ -1,5 +1,4 @@
 import clsx from "clsx";
-import { ACTION_NAVIGATE } from "next/dist/client/components/router-reducer/router-reducer-types";
 import Link from "next/link"
 
 interface DesktopItemProps {
@@ -24,7 +23,10 @@ export const DesktopItem: React.FC<DesktopItemProps> = ({
     };
 
     return (
-        <li onClick={handleClick}>
+        <li 
+            onClick={handleClick} 
+            key={label}
+        >
             <Link
                 href={href}
                 className={clsx(

@@ -1,8 +1,8 @@
 "use client";
 
 import { AuthSocialButton } from "@/app/(auth)/components/auth-social-button";
-import { Button } from "@/app/components/button";
-import { Input } from "@/app/components/inputs/input";
+import { Button } from "@/components/button";
+import { Input } from "@/components/inputs/input";
 import axios from "axios";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -26,7 +26,7 @@ export const AuthForm = () => {
     useEffect(() => {
         if (session?.status === "authenticated") {
             router.push("/conversations")
-        }
+        } 
     }, [session?.status, router])
 
     const toggleVariant = useCallback(() => {

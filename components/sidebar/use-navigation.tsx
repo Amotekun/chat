@@ -14,7 +14,7 @@ export const useNavigations = () => {
             label: "Chat",
             href: "/conversations",
             icon: HiChat,
-            isActive: pathname === "/conversation" || !!conversationId
+            isActive: pathname === "/conversations" || !!conversationId
         },
         {
             label: "Users",
