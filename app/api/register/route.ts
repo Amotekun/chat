@@ -23,7 +23,5 @@ export async function POST(
         }
     });
 
-    console.log(user);
-
     return NextResponse.json(user)
 };
