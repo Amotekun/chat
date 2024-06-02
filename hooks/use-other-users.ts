@@ -7,8 +7,6 @@ export const useOtherUsers = (conversation: FullConversationType | {users: User[
 
     const session = useSession();
 
-    console.log("SESSION: ", session);
-
     const otherUsers = useMemo(() => {
         const currentUserEmail = session.data?.user?.email;
 

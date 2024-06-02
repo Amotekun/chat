@@ -12,7 +12,7 @@ interface MessageInputProps {
 export const MessageInput: React.FC<MessageInputProps> = ({
     placeholder,
     id,
-    type,
+    type = "text",
     required,
     register,
 }) => {
