@@ -6,6 +6,8 @@ import { Conversation, User } from "@prisma/client";
 import Link from "next/link"
 import { HiChevronLeft } from "react-icons/hi"
 import { HiEllipsisHorizontal } from "react-icons/hi2"
+import { ProfileDrawer } from "./profile_drawers";
+import { useState } from "react";
 
 interface HeaderProps {
     conversation: Conversation & {
@@ -15,8 +17,15 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({conversation}) => {
     const otherUser = useOtherUsers(conversation);
+    const [drawerOpen, setDrawerOpen] = useState(false);
+
     return (
         <>
+            <ProfileDrawer 
+                data={conversation}
+                isOpen={drawerOpen}
+                onClose={() => setDrawerOpen(false)}
+            />
             <div 
                 className="bg-white w-full flex border-b-[1px] sm:px-4 py-3 px-4 lg:px-6 justify-between items-center shadow-sm"
             >
@@ -38,7 +47,7 @@ export const Header: React.FC<HeaderProps> = ({conversation}) => {
                 </div>
                 <HiEllipsisHorizontal 
                     size={32}
-                    onClick={() => {}}
+                    onClick={() => setDrawerOpen(true)}
                     className="text-sky-500 cursor-pointer hove:text-sky-600 transition"
                 />
             </div>
