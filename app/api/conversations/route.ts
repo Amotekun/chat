@@ -11,10 +11,34 @@ import { NextResponse } from "next/server";
         const body = await req.json();
         const {
             userId,
+            isGroup,
+            members,
+            name,
         } = body;
     
         if (!currentUser?.id || !currentUser.email) {
             return new NextResponse("Unauthorized", {status: 400})
+        }
+
+        if (isGroup && (!members || members.length < 2 || !name)) {
+            return new NextResponse("Group not found", {status: 400})
+        }
+
+        if (isGroup) {
+            const newGroupConversation = await db.conversation.create({
+                data: {
+                    name,
+                    isGroup,
+                    users: {
+                        connect: [
+                            {id: currentUser.id},
+                            ...members.map((member: {value: string}) => ({
+                                id: member.value
+                            }))
+                        ]
+                    }
+                }
+            })
         }
     
         const existingConversations = await db.conversation.findMany({

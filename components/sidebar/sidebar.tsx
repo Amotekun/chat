@@ -18,5 +18,5 @@ export const Sidebar: React.FC<SidebarProps> = async ({
                 {children}
             </main>
         </div>
-    )
-}
+    );
+};
