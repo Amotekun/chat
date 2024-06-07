@@ -39,6 +39,8 @@ import { NextResponse } from "next/server";
                     }
                 }
             })
+
+            return NextResponse.json(newGroupConversation)
         }
     
         const existingConversations = await db.conversation.findMany({
