@@ -1,4 +1,5 @@
 import { Avatar } from "@/components/avatar"
+import { LoadingModal } from "@/components/modals/loading-modal"
 import { User } from "@prisma/client"
 import axios from "axios"
 import { useRouter } from "next/navigation"
@@ -26,6 +27,7 @@ export const UserBox: React.FC<UserBoxProps> = ({
 
     return (
         <>
+            {isLoading && (<LoadingModal />)}
             <div
                 onClick={handleClick} 
                 className="w-full relative flex items-center space-x-3  bg-white p-3 hover:bg-neutral-100 rounded-lg transition cursor-pointer"
