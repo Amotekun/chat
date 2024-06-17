@@ -34,7 +34,7 @@ export const DesktopItem: React.FC<DesktopItemProps> = ({
                     isActive && "bg-gray-100 text-black"
                 )}
             >
-                <Icon classname="h-6 w-6 shrink-0" aria-hidden="true"/>
+                <Icon className="h-6 w-6 shrink-0" aria-hidden="true"/>
                 <span className="sr-only">
                     {label}
                 </span>

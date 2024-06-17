@@ -1,5 +1,6 @@
 import { getCurrentuser } from "@/app/actions/get-currentuser";
 import db from "@/app/libs/db";
+import { pusherServer } from "@/app/libs/pusher";
 import { NextResponse } from "next/server";
 
 export async function POST(
@@ -42,7 +43,7 @@ export async function POST(
         };
 
         // Update the seenBy array with the current user's last message
-        const updateMessage = await db.message.update({
+        const updatedMessage = await db.message.update({
             where: {
                 id: lastMessage.id
             },
@@ -59,11 +60,23 @@ export async function POST(
             }
         });
 
-        console.log('UPDATE_MESSAGE: ', updateMessage);
+        // Update all the connections with the new seen.
+        await pusherServer.trigger(currentUser.email, 'conversation:update', {
+            id: conversationId,
+            messages: [updatedMessage]
+        });
+
+        // If the user has already seen the message, no need execute the next line of code.
+        if (lastMessage.seenIds.indexOf(currentUser.id) !== -1) {
+            return NextResponse.json(conversation);
+        }
+
+        // Update last seen message
+        await pusherServer.trigger(conversationId!, 'message:update', updatedMessage)
 
         return new NextResponse("Success");
     } catch (error) {
-        console.log(error, 'ERROR_MESSAGE_SEEN');
+        console.log("ERROR_MESSAGE_SEEN", error);
         return new NextResponse("Error", {status: 500});
     }
 }

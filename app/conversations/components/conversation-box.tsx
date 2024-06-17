@@ -39,8 +39,6 @@ export const ConversationBox: React.FC<ConversationBoxProps> = ({
         }
 
         return "Start a conversation"
-
-        return
     }, [lastMessage])
     
     return (

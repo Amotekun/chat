@@ -1,5 +1,6 @@
 import { getCurrentuser } from "@/app/actions/get-currentuser";
 import db from "@/app/libs/db";
+import { pusherServer } from "@/app/libs/pusher";
 import { NextResponse } from "next/server";
 
  export async function POST(
@@ -37,8 +38,18 @@ import { NextResponse } from "next/server";
                             }))
                         ]
                     }
+                },
+                include: {
+                    users: true
                 }
             })
+
+            // Update all connections with new group conversation
+            newGroupConversation.users.forEach((user) => {
+                if (user.email) {
+                    pusherServer.trigger(user.email, 'conversation:new', newGroupConversation)
+                }
+            });
 
             return NextResponse.json(newGroupConversation)
         }
@@ -83,6 +94,13 @@ import { NextResponse } from "next/server";
                 users: true
             }
         })
+
+        // Update all connections with new conversation
+        newConversation.users.map((user) => {
+            if (user.email) {
+                pusherServer.trigger(user.email, 'conversation:new', newConversation)
+            }
+        });
     
         return NextResponse.json(newConversation)
     } catch (error) {

@@ -1,7 +1,7 @@
 "use client";
 
 import { FullConversationType } from "@/app/types";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MdOutlineGroupAdd } from "react-icons/md";
 import { ConversationBox } from "./conversation-box";
 import { useConversation } from "@/hooks/use-conversation";
@@ -10,6 +10,8 @@ import { User } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { GroupChatModal } from "@/components/modals/group-chat-modal";
+import { pusherClient } from "@/app/libs/pusher";
+import { find } from "lodash";
 
 interface ConversationListProps {
     initialItems: FullConversationType[];
@@ -20,7 +22,6 @@ interface ConversationListProps {
 export const ConversationList: React.FC<ConversationListProps> = ({
     initialItems,
     users,
-    title
 }) => {
     const {conversationId, isOpen} = useConversation();
 
@@ -30,6 +31,51 @@ export const ConversationList: React.FC<ConversationListProps> = ({
 
     const [items, selectedItem] = useState(initialItems);
     const [GroupModalOpen, IsGroupModalOpen] = useState(false);
+
+    const pusherKey = useMemo(() => {
+        return session.data?.user?.email;
+    }, [session.data?.user?.email])
+
+    useEffect(() => {
+        if(!pusherKey) return;
+
+        pusherClient.subscribe(pusherKey);
+
+        const updateHandler = (conversation: FullConversationType) => {
+            selectedItem((current) => current.map((currentConversation) => {
+                if (currentConversation.id === conversation.id) {
+                    return {
+                        ...currentConversation,
+                        messages: conversation.messages,
+                    }
+                }
+
+                return currentConversation;
+            }));
+        };
+
+        // the "loadash-find" here means, no duplicate should be added to the converation list
+        const newHandler = (conversation: FullConversationType) => {
+            selectedItem((current) => {
+                if (find(current, {id: conversation.id})) {
+                    return current;
+                }
+
+                return [conversation, ...current];
+            });
+        };
+
+        const deleteHandler = (conversation: FullConversationType) => {
+            selectedItem((current) => {
+                return [...current.filter((item) => item.id !== conversation.id)]
+            })
+        }
+
+        pusherClient.bind('conversation:update', updateHandler);
+        pusherClient.bind('conversation:new', newHandler);
+        pusherClient.bind('conversation:delete', deleteHandler)
+
+    }, [pusherKey, router])
 
     return (
         <>

@@ -11,7 +11,10 @@ import { ClipLoader } from "react-spinners"
 
 export const LoadingModal = () => {
     return (
-        <Transition>
+        <Transition 
+            as={Fragment}
+            show={true}
+        >
             <Dialog
                 as="div" 
                 className="relative z-50"
