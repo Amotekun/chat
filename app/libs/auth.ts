@@ -14,30 +14,34 @@ const authOptions: AuthOptions = {
         password: { label: 'password', type: 'password' }
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error('Invalid credentials');
-        }
-
-        const user = await db.user.findUnique({
-          where: {
-            email: credentials.email
+        try {
+          if (!credentials?.email || !credentials?.password) {
+            throw new Error('Invalid credentials');
           }
-        });
-
-        if (!user || !user?.hashedPassword) {
-          throw new Error('Invalid credentials');
+  
+          const user = await db.user.findUnique({
+            where: {
+              email: credentials.email
+            }
+          });
+  
+          if (!user || !user?.hashedPassword) {
+            throw new Error('Invalid credentials');
+          }
+  
+          const isCorrectPassword = await bcrypt.compare(
+            credentials.password,
+            user.hashedPassword
+          );
+  
+          if (!isCorrectPassword) {
+            throw new Error('Invalid credentials');
+          }
+  
+          return user;
+        } catch (error: any) {
+          throw new Error(`Authentication error: ${error.message}`)
         }
-
-        const isCorrectPassword = await bcrypt.compare(
-          credentials.password,
-          user.hashedPassword
-        );
-
-        if (!isCorrectPassword) {
-          throw new Error('Invalid credentials');
-        }
-
-        return user;
       }
     })
   ],
